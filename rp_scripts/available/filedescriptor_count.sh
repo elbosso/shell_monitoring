@@ -48,7 +48,7 @@ max=`cat /proc/sys/fs/file-nr|cut -f 3`
 used=$(( allocated-free ))
 #echo $used>&2
 percentageused=$(( $used*100/$max ))
-if [ $? -ne 0 ]; then
+if [ $? -lt $THRESHOLDPERCENTAGE ]; then
 	echo "filedescriptor count"
 	exit 1
 fi
