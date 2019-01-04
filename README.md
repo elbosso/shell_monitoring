@@ -1,5 +1,18 @@
 # shell_monitoring
 
+<!---
+[![start with why](https://img.shields.io/badge/start%20with-why%3F-brightgreen.svg?style=flat)](http://www.ted.com/talks/simon_sinek_how_great_leaders_inspire_action)
+--->
+[![GitHub release](https://img.shields.io/github/release/elbosso/shell_monitoring/all.svg?maxAge=1)](https://GitHub.com/elbosso/shell_monitoring/releases/)
+[![GitHub tag](https://img.shields.io/github/tag/elbosso/shell_monitoring.svg)](https://GitHub.com/elbosso/shell_monitoring/tags/)
+[![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/)
+[![GitHub license](https://img.shields.io/github/license/elbosso/shell_monitoring.svg)](https://github.com/elbosso/shell_monitoring/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/elbosso/shell_monitoring.svg)](https://GitHub.com/elbosso/shell_monitoring/issues/)
+[![GitHub issues-closed](https://img.shields.io/github/issues-closed/elbosso/shell_monitoring.svg)](https://GitHub.com/elbosso/shell_monitoring/issues?q=is%3Aissue+is%3Aclosed)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/elbosso/shell_monitoring/issues)
+[![GitHub contributors](https://img.shields.io/github/contributors/elbosso/shell_monitoring.svg)](https://GitHub.com/elbosso/shell_monitoring/graphs/contributors/)
+[![Github All Releases](https://img.shields.io/github/downloads/elbosso/shell_monitoring/total.svg)](https://github.com/elbosso/shell_monitoring)
+
 The documentation for this project is planned to grow - for now, you
 can take a look at various entries in my website - for example
  * https://elbosso.github.io/roadmap_i_alarmmonitoring.html#content
