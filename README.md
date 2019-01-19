@@ -12,6 +12,7 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/elbosso/shell_monitoring/issues)
 [![GitHub contributors](https://img.shields.io/github/contributors/elbosso/shell_monitoring.svg)](https://GitHub.com/elbosso/shell_monitoring/graphs/contributors/)
 [![Github All Releases](https://img.shields.io/github/downloads/elbosso/shell_monitoring/total.svg)](https://github.com/elbosso/shell_monitoring)
+[![Website elbosso.github.io](https://img.shields.io/website-up-down-green-red/https/elbosso.github.io.svg)](https://elbosso.github.io/)
 
 The documentation for this project is planned to grow - for now, you
 can take a look at various entries in my website - for example
