@@ -1,0 +1,23 @@
+#!/bin/sh
+
+echo `basename $0` >&2
+
+PROTO="http://"
+HOST=<host>
+PORT=<port>
+DB=<db>
+FIELD=load1
+MEASUREMENT=system
+WHERECLAUSE="\"host\"='<host>'"
+THRESH=0.6
+
+value=$(curl -s "$PROTO$HOST:$PORT/query?pretty=true" --data-urlencode "db=$DB" --data-urlencode "q=SELECT \"${FIELD}\" FROM \"${MEASUREMENT}\" WHERE ${WHERECLAUSE} ORDER BY time DESC LIMIT 1" |jq -r '.results[0].series[0].values[0][1]')
+
+echo $value >&2
+
+st=$((`echo "$value > $THRESH"| bc`))
+
+if [ $st -eq 1 ]; then
+	echo "template"
+	exit 1
+fi
