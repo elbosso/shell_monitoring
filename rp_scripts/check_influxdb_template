@@ -1,23 +1,29 @@
-#!/bin/sh
+#!/bin/bash
 
 echo `basename $0` >&2
 
 PROTO="http://"
-HOST=<host>
-PORT=<port>
-DB=<db>
+HOST=192.168.10.2
+PORT=8086
+DB=monitoring
 FIELD=load1
 MEASUREMENT=system
-WHERECLAUSE="\"host\"='<host>'"
+WHERECLAUSE="\"host\"='tichy'"
 THRESH=0.6
+TIMESPAN=5m
 
-value=$(curl -s "$PROTO$HOST:$PORT/query?pretty=true" --data-urlencode "db=$DB" --data-urlencode "q=SELECT \"${FIELD}\" FROM \"${MEASUREMENT}\" WHERE ${WHERECLAUSE} ORDER BY time DESC LIMIT 1" |jq -r '.results[0].series[0].values[0][1]')
+value=$(curl -s "$PROTO$HOST:$PORT/query?pretty=true" --data-urlencode "db=$DB" --data-urlencode "q=SELECT \"${FIELD}\" FROM \"${MEASUREMENT}\" WHERE ${WHERECLAUSE} AND time > now() - ${TIMESPAN} ORDER BY time DESC LIMIT 1" |jq -r '.results[0].series[0].values[0][1]')
 
 echo $value >&2
 
-st=$((`echo "$value > $THRESH"| bc`))
+if [ "$value" == "null" ]
+then
+	st=2
+else
+	st=$((`echo "$value > $THRESH"| bc`))
+fi
 
-if [ $st -eq 1 ]; then
-	echo "template"
+if [ $st -ne 0 ]; then
+	echo "template" "$st"
 	exit 1
 fi
