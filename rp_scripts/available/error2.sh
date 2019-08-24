@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,7 +35,7 @@
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
 
-echo `basename $0` >&2
+echo "$(basename "$0")" >&2
 
 #if [ $? -ne 0 ]; then
 	echo "error 2"

@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005,SC2086
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,12 +35,13 @@
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
 
+echo "$(basename "$0")" >&2
+
 THRESHOLD=0.75
 
-echo `basename $0` >&2
-load=`iostat -c |tail -n 2|head -n 1|awk '{print $4}'`
+load=$(iostat -c |tail -n 2|head -n 1|awk '{print $4}')
 comparisonresult=$(awk 'BEGIN{ print "'$THRESHOLD'"<="'$load'" }')
-if [ $comparisonresult -eq 1 ]; then
+if [ "$comparisonresult" -eq 1 ]; then
 	echo "io load"
 	exit 1
 fi

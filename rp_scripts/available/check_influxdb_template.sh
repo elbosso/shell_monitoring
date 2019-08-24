@@ -1,5 +1,5 @@
-#!/bin/sh
-# shellcheck disable=SC2181,SC2002,SC2039
+#!/bin/bash
+# shellcheck disable=SC2181,SC2005
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,43 +34,30 @@
 #WEG SIE AUCH IMMER DURCH DIE BENUTZUNG DIESER SOFTWARE ENTSTANDEN SIND, SOGAR,
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
-#Resultatsdatei: in dieser Datei stehen Zeile für Zeile die Fehlermeldung der unterschiedlichen Skripte
-#das bedeutet: die Ausgaben der Skripte auf stdout
-RESULTFILE=/tmp/monitoring_results.txt
-#Spielraum: Wenn der Zeitstempel in $RESULTFILE älter ist als der hier angegebene wert (in Sekunden)
-#wird trotzdem ein Fehler gemeldet, da offenbar das Monitoring-Skript nicht mehr ausgeführt wird.
-ALLOWEDLAG=300
+echo "$(basename "$0")" >&2
 
-#Server des Kontos, das zum Versenden der Monitoring-Nachrichten verwendet werden soll
-JABBERSERVER=jabber.de
-#Username des Kontos, das zum Versenden der Monitoring-Nachrichten verwendet werden soll
-SENDERUSER=user
-#Passwort des Kontos, das zum Versenden der Monitoring-Nachrichten verwendet werden soll
-SENDERTOKEN=password
-#ID des Empfängers der Alarmmeldungen
-RECEIVER=receiver
+PROTO="http://"
+HOST=192.168.10.2
+PORT=8086
+DB=monitoring
+FIELD=load1
+MEASUREMENT=system
+WHERECLAUSE="\"host\"='tichy'"
+THRESH=0.6
+TIMESPAN=5m
 
-lastResult=$(cat $RESULTFILE|sed 's/_/ /g')
+value=$(curl -s "$PROTO$HOST:$PORT/query?pretty=true" --data-urlencode "db=$DB" --data-urlencode "q=SELECT \"${FIELD}\" FROM \"${MEASUREMENT}\" WHERE ${WHERECLAUSE} AND time > now() - ${TIMESPAN} ORDER BY time DESC LIMIT 1" |jq -r '.results[0].series[0].values[0][1]')
 
-#echo $lastResult >&2
+echo "$value" >"&2"
 
-lastPersistentDate=$(date --date="$lastResult" +"%F %T")
-
-#echo $lastPersistentDate >&2
-
-if [ $? -ne 0 ]; then
-	echo "error condition detected" >&2
-	echo -n "$lastResult"|sendxmpp -j ${JABBERSERVER} -u ${SENDERUSER} -p ${SENDERTOKEN} -t --tls-ca-path="/etc/ssl/certs" ${RECEIVER}
+if [ "$value" == "null" ]
+then
+	st=2
 else
-	ts=$(date --date="$lastPersistentDate" +%s)
-	now=$(date +%s)
-#	echo $ts $now >&2
-	diffSec=$((now-ts))
-#	echo $diffSec >&2
-	if [ $diffSec -lt $ALLOWEDLAG ]; then 
-		echo "no error condition detected" >&2
-	else 
-		echo "timestamp too old!" >&2
-		echo -n "timestamp too old (${lastResult})!"|sendxmpp -j ${JABBERSERVER} -u ${SENDERUSER} -p ${SENDERTOKEN} -t --tls-ca-path="/etc/ssl/certs" ${RECEIVER}
-	fi
+	st=$(($(echo "$value > $THRESH"| bc)))
+fi
+
+if [ $st -ne 0 ]; then
+	echo "template" "$st"
+	exit 1
 fi

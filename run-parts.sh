@@ -1,39 +1,5 @@
 #!/bin/sh
-###################################################################################
-#Copyright (c) 2012-2018.
-#
-#Juergen Key. Alle Rechte vorbehalten.
-#
-#Weiterverbreitung und Verwendung in nichtkompilierter oder kompilierter Form,
-#mit oder ohne Veraenderung, sind unter den folgenden Bedingungen zulaessig:
-#
-#   1. Weiterverbreitete nichtkompilierte Exemplare muessen das obige Copyright,
-#die Liste der Bedingungen und den folgenden Haftungsausschluss im Quelltext
-#enthalten.
-#   2. Weiterverbreitete kompilierte Exemplare muessen das obige Copyright,
-#die Liste der Bedingungen und den folgenden Haftungsausschluss in der
-#Dokumentation und/oder anderen Materialien, die mit dem Exemplar verbreitet
-#werden, enthalten.
-#   3. Weder der Name des Autors noch die Namen der Beitragsleistenden
-#duerfen zum Kennzeichnen oder Bewerben von Produkten, die von dieser Software
-#abgeleitet wurden, ohne spezielle vorherige schriftliche Genehmigung verwendet
-#werden.
-#
-#DIESE SOFTWARE WIRD VOM AUTOR UND DEN BEITRAGSLEISTENDEN OHNE
-#JEGLICHE SPEZIELLE ODER IMPLIZIERTE GARANTIEN ZUR VERFUEGUNG GESTELLT, DIE
-#UNTER ANDEREM EINSCHLIESSEN: DIE IMPLIZIERTE GARANTIE DER VERWENDBARKEIT DER
-#SOFTWARE FUER EINEN BESTIMMTEN ZWECK. AUF KEINEN FALL IST DER AUTOR
-#ODER DIE BEITRAGSLEISTENDEN FUER IRGENDWELCHE DIREKTEN, INDIREKTEN,
-#ZUFAELLIGEN, SPEZIELLEN, BEISPIELHAFTEN ODER FOLGENDEN SCHAEDEN (UNTER ANDEREM
-#VERSCHAFFEN VON ERSATZGUETERN ODER -DIENSTLEISTUNGEN; EINSCHRAENKUNG DER
-#NUTZUNGSFAEHIGKEIT; VERLUST VON NUTZUNGSFAEHIGKEIT; DATEN; PROFIT ODER
-#GESCHAEFTSUNTERBRECHUNG), WIE AUCH IMMER VERURSACHT UND UNTER WELCHER
-#VERPFLICHTUNG AUCH IMMER, OB IN VERTRAG, STRIKTER VERPFLICHTUNG ODER
-#UNERLAUBTE HANDLUNG (INKLUSIVE FAHRLAESSIGKEIT) VERANTWORTLICH, AUF WELCHEM
-#WEG SIE AUCH IMMER DURCH DIE BENUTZUNG DIESER SOFTWARE ENTSTANDEN SIND, SOGAR,
-#WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
-###################################################################################
-
+# shellcheck disable=SC2003,SC2039,SC2061,SC2006
 #Aufruf wie folgt: namen der ausgeführten Scripts werden in /tmp/debug.log hinterlegt
 #./run-parts.sh 2> /tmp/debug.log
 
@@ -71,8 +37,8 @@ RESULTFILE=/tmp/monitoring_results.txt
 USECMDLINE=0
 workOnDir ()
 {
-  echo $1 $2
-  data=`ls $1/*.sh 2>/dev/null`
+  echo "$1" "$2"
+  data=$(ls "$1"/*.sh 2>/dev/null)
   for script in $data ;
   do
   #echo "found $script"
@@ -80,50 +46,50 @@ workOnDir ()
       if [ -x "$script" ]; then
   #echo "executable $script"
   #Script ausführen
-  		b=$(basename $script)
-      	RESULTS=$RESULTS$2`$script`'\n'
-          errorCode=$?
-  	if [ $errorCode -ne 0 ]; then
+  		b=$(basename "$script")
+      	RESULTS="$RESULTS""$2"`$script`'\n'
+          errorCode="$?"
+  	if [ "$errorCode" -ne 0 ]; then
   #echo "tata " $SCRIPTDIR/leniency
-  	    if [ -e $1/leniency ]; then
+  	    if [ -e "$1"/leniency ]; then
   #echo "huhu "$b
-  			if [ -e $1/leniency/$b ]; then
+  			if [ -e "$1"/leniency/"$b" ]; then
   #echo "zzt "$SCRIPTDIR/leniency/${b}_m
   				c=0
-  				if [ -e $1/leniency/${b}_m ]; then
-  					a=`cat $1/leniency/${b}_m`
+  				if [ -e "$1"/leniency/"$b"_m ]; then
+  					a=$(cat "$1"/leniency/"$b"_m)
   #echo "cat "$a
-  					c=`expr $a + 1`
+  					c=$(expr "$a" + 1)
   				fi
-  				echo -n $c >$1/leniency/${b}_m
-  				l=`cat $1/leniency/${b}`
+  				echo -n "$c" >"$1"/leniency/"$b"_m
+  				l=$(cat "$1"/leniency/"$b")
   #echo "comparing "$c" and "$l
-  				if [ $c -lt $l ]; then
+  				if [ "$c" -lt "$l" ]; then
   #echo "all good"
   					errorCode=0
             RESULTS=""
   				else
-  					echo -n 0 >$1/leniency/${b}_m
+  					echo -n 0 >"$1"/leniency/"$b"_m
   				fi
   			fi
   		fi
   	fi
-  	if [ $errorCode -ne 0 ]; then
-  		if [ $FAILONERROR -eq 1 ]; then
-  			echo -n $RESULTS > $RESULTFILE
+  	if [ "$errorCode" -ne 0 ]; then
+  		if [ "$FAILONERROR" -eq 1 ]; then
+  			echo -n "$RESULTS" > "$RESULTFILE"
   			#Wieder in ursprüngliches Verzeichnis zurückwechseln
-  			cd $PWD
+  			cd "$PWD" || return
   			#Falls working dir extra angelegt wurde - Spuren verwischen!
-  			if [ $WDEXISTS -eq 0 ]; then
-  				rmdir $WORKINGDIR
+  			if [ "$WDEXISTS" -eq 0 ]; then
+  				rmdir "$WORKINGDIR"
   			fi
   			exit 1
   		else
-  			FAILED=$(( $FAILED+1 ))
+  			FAILED=$(( "$FAILED"+1 ))
   		fi
   	else
-  		if [ -x $1/leniency/${b}_m ]; then
-  			rm $1/leniency/${b}_m
+  		if [ -x "$1"/leniency/"$b"_m ]; then
+  			rm "$1"/leniency/"$b"_m
   		fi
   	fi
       fi
@@ -134,66 +100,66 @@ displayHelp ()
         echo "$0 <script dir> <working dir> <fail on error (0|1)> <result file>"
 }
 if [ $USECMDLINE -eq 1 ]; then
-	if [ $# -lt 4 ]; then
+	if [ "$#" -lt 4 ]; then
 		echo "not enough parameters!"
 		displayHelp
 		exit 13
-	elif [ ! -e $1 ]; then
+	elif [ ! -e "$1" ]; then
 		echo "$1 does not exist!"
 		displayHelp
 		exit 14
-	elif [ ! -d $1 ]; then
+	elif [ ! -d "$1" ]; then
 		echo "$1 is not a directory!"
 		displayHelp
 		exit 15
 	else
-		SCRIPTDIR=$1
-		WORKINGDIR=$2
-		FAILONERROR=$3
+		SCRIPTDIR="$1"
+		WORKINGDIR="$2"
+		FAILONERROR="$3"
 	fi
 fi
 #altes Verzeichnis merken
-PWD=`pwd`
+PWD=$(pwd)
 #check, ob working dir existiert
-if [ -e $WORKINGDIR ]; then
+if [ -e "$WORKINGDIR" ]; then
 	WDEXISTS=1;
 else
 	WDEXISTS=0;
 fi
 #falls working dir nicht existiert - anlegen!
-if [ $WDEXISTS -eq 0 ]; then
-	mkdir -p $WORKINGDIR
+if [ "$WDEXISTS" -eq 0 ]; then
+	mkdir -p "$WORKINGDIR"
 fi
 #ins working dir wechseln
-cd $WORKINGDIR
+cd "$WORKINGDIR" || return
 #initialisierug
 FAILED=0
 RESULTS=""
 #Scripts suchen
-dirs=`find $SCRIPTDIR/* -maxdepth 0 -type d -name cg_*`
+dirs=$(find "$SCRIPTDIR"/* -maxdepth 0 -type d -name cg_*)
 for dir in $dirs ;
 do
-  dname=$(basename $dir)
-  echo $dname
-  CALLGROUP=`echo -n "$dname"| cut -d _ -f 2`
-  workOnDir $dir $CALLGROUP
-  echo $FAILED
-  echo $RESULTS
+  dname=$(basename "$dir")
+  echo "$dname"
+  CALLGROUP=$(echo -n "$dname"| cut -d _ -f 2)
+  workOnDir "$dir" "$CALLGROUP"
+  echo "$FAILED"
+  echo "$RESULTS"
 done;
 echo "--"
 CALLGROUP=""
-workOnDir $SCRIPTDIR $CALLGROUP
-echo $FAILED
-echo $RESULTS
-if [ $FAILED -ne 0 ]; then
-	echo -n $RESULTS > $RESULTFILE
+workOnDir "$SCRIPTDIR" "$CALLGROUP"
+echo "$FAILED"
+echo "$RESULTS"
+if [ "$FAILED" -ne 0 ]; then
+	echo -n "$RESULTS" > "$RESULTFILE"
 else
-	date +%F_%T > $RESULTFILE
+	date +%F_%T > "$RESULTFILE"
 fi
 #Wieder in ursprüngliches Verzeichnis zurückwechseln
-cd $PWD
+cd "$PWD" || return
 #Falls working dir extra angelegt wurde - Spuren verwischen!
-if [ $WDEXISTS -eq 0 ]; then
-	rmdir $WORKINGDIR
+if [ "$WDEXISTS" -eq 0 ]; then
+	rmdir "$WORKINGDIR"
 fi
-exit $FAILED
+exit "$FAILED"

@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -36,12 +37,12 @@
 
 DEVICE=eth1
 
-echo `basename $0` >&2
+echo "$(basename "$0")" >&2
 ip link add link $DEVICE dhcptest address 02:22:33:44:55:66 type macvlan
 ifconfig -a
 dhclient dhcptest
 ip link delete dhcptest type macvlan
-if [ $? -ne 0 ]; then
+if [ "$?" -ne 0 ]; then
 	echo "dhcp"
 	killall dhclient
 	exit 1

@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,11 +35,12 @@
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
 
-echo `basename $0` >&2
+echo "$(basename "$0")" >&2
+
 containername=xenial-gui-operative
-number=`lxc-ls --active --fancy|grep -P "(^|\s)\K${containername}(?=\s|$)"|wc -l)`
+number=$(lxc-ls --active --fancy|grep -c -P "(^|\s)\K${containername}(?=\s|$)")
 #echo $number
-if [ $number -eq 0 ]; then
+if [ "$number" -eq 0 ]; then
 	echo "lxc container ${containername} not running"
 	exit 1
 fi

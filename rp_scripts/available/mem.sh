@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005,SC2004
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,14 +35,15 @@
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
 
+echo "$(basename "$0")" >&2
+
 THRESHOLDPERCENTAGE=75
 
-echo `basename $0` >&2
-total=`free -t |grep Mem:|cut -d : -f 2| sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'|cut -d\  -f 1`
-used=`free -t |grep -|cut -d : -f 2| sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'|cut -d\  -f 1`
+total=$(free -t |grep Mem:|cut -d : -f 2| sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'|cut -d\  -f 1)
+used=$(free -t |grep -|cut -d : -f 2| sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'|cut -d\  -f 1)
 percentageused=$(( $used*100/$total ))
 #echo $percentageused
-if [ $percentageused -ge $THRESHOLDPERCENTAGE ]; then
+if [ "$percentageused" -ge "$THRESHOLDPERCENTAGE" ]; then
 	echo "memory"
 	exit 1
 fi

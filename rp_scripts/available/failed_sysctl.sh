@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -36,9 +37,9 @@
 
 THRESHOLD=1
 
-echo `basename $0` >&2
-count=`systemctl --failed|grep "loaded units listed"|cut -d " " -f 1`
-if [ $count -ge $THRESHOLD ]; then
+echo "$(basename "$0")" >&2
+count=$(systemctl --failed|grep "loaded units listed"|cut -d " " -f 1)
+if [ "$count" -ge "$THRESHOLD" ]; then
 	echo "Failed systemd modules ($count)"
 	exit 1
 fi

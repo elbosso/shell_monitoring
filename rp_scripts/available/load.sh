@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005,SC2086
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,13 +35,14 @@
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
 
+echo "$(basename "$0")" >&2
+
 THRESHOLD=0.75
 
-echo `basename $0` >&2
-load=`uptime | rev |cut -d : -f 1|rev|cut -d , -f 3| tr -d ' '`
+load=$(uptime | rev |cut -d : -f 1|rev|cut -d , -f 3| tr -d ' ')
 #echo $load
 comparisonresult=$(awk 'BEGIN{ print "'$THRESHOLD'"<="'$load'" }')
-if [ $comparisonresult -eq 1 ]; then
+if [ "$comparisonresult" -eq 1 ]; then
 	echo "load"
 	exit 1
 fi

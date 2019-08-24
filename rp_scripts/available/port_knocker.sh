@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,13 +35,14 @@
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
 
+echo "$(basename "$0")" >&2
+
 HOST=localhost
 PORT=22
 #http://stackoverflow.com/a/9609247
 
-echo `basename $0` >&2
-nc -z $HOST $PORT
-if [ $? -ne 0 ]; then
+nc -z "$HOST" "$PORT"
+if [ "$?" -ne 0 ]; then
 	echo "port $HOST:$PORT"
 	exit 1
 fi

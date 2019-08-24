@@ -1,8 +1,0 @@
-#!/bin/sh
-
-echo `basename $0` >&2
-
-if [ $? -ne 0 ]; then
-	echo "template"
-	exit 1
-fi

@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005,SC2004
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,14 +35,14 @@
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
 
-echo `basename $0` >&2
+echo "$(basename "$0")" >&2
 
 filename=/tmp/a
 seconds=180
-#echo  $(( (`date +%s` - `stat -L --format %Y $filename`)))
-result=$(( (`date +%s` - `stat -L --format %Y $filename`) > ($seconds) ))
+#echo  $(( ($(date +%s) - $(stat -L --format %Y $filename))))
+result=$(( ($(date +%s) - $(stat -L --format %Y $filename)) > ($seconds) ))
 #echo $result
-if [ $result -ne 0 ]; then
+if [ "$result" -ne 0 ]; then
 	echo "$filename older that $seconds!"
 	exit 1
 fi

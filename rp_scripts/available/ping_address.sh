@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,9 +35,10 @@
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
 
-echo `basename $0` >&2
+echo "$(basename "$0")" >&2
+
 ping -c 2 8.8.8.8  > /dev/null
-if [ $? -ne 0 ]; then
+if [ "$?" -ne 0 ]; then
 	echo "ping address"
 	exit 1
 fi

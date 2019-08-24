@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,21 +35,21 @@
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
 
-THRESHOLDPERCENTAGE=75
+echo "$(basename "$0")" >&2
 
-echo `basename $0` >&2
+#THRESHOLDPERCENTAGE=75
 
 #http://www.netadmintools.com/art295.html
-allocated=`cat /proc/sys/fs/file-nr|cut -f 1`
-free=`cat /proc/sys/fs/file-nr|cut -f 2`
-max=`cat /proc/sys/fs/file-nr|cut -f 3`
+#allocated=$(cat /proc/sys/fs/file-nr|cut -f 1)
+#free=$(cat /proc/sys/fs/file-nr|cut -f 2)
+#max=$(cat /proc/sys/fs/file-nr|cut -f 3)
 #echo $allocated>&2
 #echo $free>&2
 #echo $max>&2
-used=$(( allocated-free ))
+#used=$(( allocated-free ))
 #echo $used>&2
-percentageused=$(( $used*100/$max ))
-if [ $? -lt $THRESHOLDPERCENTAGE ]; then
+#percentageused=$(( $used*100/$max ))
+if [ "$?" -ne 0 ]; then
 	echo "filedescriptor count"
 	exit 1
 fi

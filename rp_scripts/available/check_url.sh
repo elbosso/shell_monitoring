@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -36,10 +37,10 @@
 
 URL="--no-check-certificate https://klapauzius"
 
-echo `basename $0` >&2
+echo "$(basename "$0")" >&2
 rm out.html
-wget $URL -O out.html > /dev/null 2>&1
-if [ $? -ne 0 ]; then
+wget "$URL" -O out.html > /dev/null 2>&1
+if [ "$?" -ne 0 ]; then
 	echo "url"
 	exit 1
 fi

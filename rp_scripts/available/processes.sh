@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,11 +35,12 @@
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
 
+echo "$(basename "$0")" >&2
+
 THRESHOLD=160
 
-echo `basename $0` >&2
-count=`ps aux|wc -l`
-if [ $count -ge $THRESHOLD ]; then
+count=$(ps aux|wc -l)
+if [ "$count" -ge "$THRESHOLD" ]; then
 	echo "processes"
 	exit 1
 fi

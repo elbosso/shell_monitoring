@@ -1,5 +1,5 @@
-#!/bin/sh
-# shellcheck disable=SC2181,SC2002,SC2039
+#!/bin/bash
+# shellcheck disable=SC2181,SC2005
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,43 +34,50 @@
 #WEG SIE AUCH IMMER DURCH DIE BENUTZUNG DIESER SOFTWARE ENTSTANDEN SIND, SOGAR,
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
-#Resultatsdatei: in dieser Datei stehen Zeile für Zeile die Fehlermeldung der unterschiedlichen Skripte
-#das bedeutet: die Ausgaben der Skripte auf stdout
-RESULTFILE=/tmp/monitoring_results.txt
-#Spielraum: Wenn der Zeitstempel in $RESULTFILE älter ist als der hier angegebene wert (in Sekunden)
-#wird trotzdem ein Fehler gemeldet, da offenbar das Monitoring-Skript nicht mehr ausgeführt wird.
-ALLOWEDLAG=300
-
-#Server des Kontos, das zum Versenden der Monitoring-Nachrichten verwendet werden soll
-JABBERSERVER=jabber.de
-#Username des Kontos, das zum Versenden der Monitoring-Nachrichten verwendet werden soll
-SENDERUSER=user
-#Passwort des Kontos, das zum Versenden der Monitoring-Nachrichten verwendet werden soll
-SENDERTOKEN=password
-#ID des Empfängers der Alarmmeldungen
-RECEIVER=receiver
-
-lastResult=$(cat $RESULTFILE|sed 's/_/ /g')
-
-#echo $lastResult >&2
-
-lastPersistentDate=$(date --date="$lastResult" +"%F %T")
-
-#echo $lastPersistentDate >&2
-
-if [ $? -ne 0 ]; then
-	echo "error condition detected" >&2
-	echo -n "$lastResult"|sendxmpp -j ${JABBERSERVER} -u ${SENDERUSER} -p ${SENDERTOKEN} -t --tls-ca-path="/etc/ssl/certs" ${RECEIVER}
+echo "$(basename "$0")" >&2
+#echo "waiting for message body (CTRL-D ends it)..."
+huhu=$(env MAILRC=/dev/null -from=SenderMailAddress smtp=SmtpServer \
+smtp-auth-user=SmtpAuthUser smtp-auth-password=SmtpAuthPassword \
+echo "type *" | mail -u monitoring 2> /dev/null)
+echo "$huhu"
+if [ ! "$huhu" ]; then
+   echo "no mails"
+   exit 1
 else
-	ts=$(date --date="$lastPersistentDate" +%s)
-	now=$(date +%s)
-#	echo $ts $now >&2
-	diffSec=$((now-ts))
-#	echo $diffSec >&2
-	if [ $diffSec -lt $ALLOWEDLAG ]; then 
-		echo "no error condition detected" >&2
-	else 
-		echo "timestamp too old!" >&2
-		echo -n "timestamp too old (${lastResult})!"|sendxmpp -j ${JABBERSERVER} -u ${SENDERUSER} -p ${SENDERTOKEN} -t --tls-ca-path="/etc/ssl/certs" ${RECEIVER}
-	fi
+    huhu=$(echo "$huhu" | grep -A 1 "^HMI Status Mail")
+    if [ ! "$huhu" ]; then
+        echo "no hmi status mails"
+        exit 1
+    else
+#        echo "$huhu"
+        huhu=$(echo "$huhu" | grep -v "^HMI Status Mail" | grep -v "^--")
+        if [ ! "$huhu" ]; then
+            echo "error parsing mails"
+            exit 1
+        else
+        mkdir -p /root/maillogs
+        t=$(date +%T)
+        d=$(date +%F)
+        echo "----- $t -----" >>/root/maillogs/"$d".log
+        echo "$huhu" >>/root/maillogs/"$d".log
+            #Set the field separator to new line
+            IFS=$'\n'
+            for item in $huhu
+            do
+#            echo "#"
+#                echo "Item: $item"
+#            echo "*"
+#Achtung:
+dat=$(echo -n "$item"|sed 's/_/ /')
+                d=$(date -d "$dat" 2>/dev/null)
+                if [ $? -ne 0 ]; then
+                    echo "$item"
+                    exit 1
+#                else
+#                    echo $d
+                fi
+            done
+        fi
+    fi
 fi
+

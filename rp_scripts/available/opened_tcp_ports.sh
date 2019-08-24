@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,11 +35,12 @@
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
 
+echo "$(basename "$0")" >&2
+
 THRESHOLD=100
 
-echo `basename $0` >&2
-count=`netstat -atn |wc -l`
-if [ $count -ge $THRESHOLD ]; then
+count=$(netstat -atn |wc -l)
+if [ "$count" -ge "$THRESHOLD" ]; then
 	echo "tcp port count"
 	exit 1
 fi

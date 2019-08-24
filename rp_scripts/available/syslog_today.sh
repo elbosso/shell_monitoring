@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2181,SC2005,SC2002
 ###################################################################################
 #Copyright (c) 2012-2018.
 #
@@ -34,13 +35,14 @@
 #WENN SIE AUF DIE MOEGLICHKEIT EINES SOLCHEN SCHADENS HINGEWIESEN WORDEN SIND.
 ###################################################################################
 
+echo "$(basename "$0")" >&2
+
 PATTERN="transaction1\|updates1"
 
-echo `basename $0` >&2
-#yesterday=`TZ=CST+24 date +"%b %_d"`
-today=`TZ=CST+24 date +"%b %_d"`
-count=`cat /var/log/syslog |grep "$today"|grep -e $PATTERN|wc -l`
-if [ $count -ne 0 ]; then
+#yesterday=$(TZ=CST+24 date +"%b %_d")
+today=$(TZ=CST+24 date +"%b %_d")
+count=$(cat /var/log/syslog |grep "$today"|grep -c -e "$PATTERN")
+if [ "$count" -ne 0 ]; then
 	echo "syslog today $PATTERN"
 	exit 1
 fi
